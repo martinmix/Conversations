@@ -264,25 +264,41 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		Toolbar toolbar = (Toolbar) binding.toolbar;
 		setSupportActionBar(toolbar);
 		configureActionBar(getSupportActionBar());
-		this.binding.fab.setOnClickListener((v) -> {
-			if (binding.startConversationViewPager.getCurrentItem() == 0) {
-				String searchString = mSearchEditText != null ? mSearchEditText.getText().toString() : null;
-				if (searchString != null && !searchString.trim().isEmpty()) {
-					try {
-						Jid jid = Jid.of(searchString);
-						if (jid.getLocal() != null && jid.isBareJid() && jid.getDomain().contains(".")) {
-							showCreateContactDialog(jid.toString(), null);
-							return;
-						}
-					} catch (IllegalArgumentException ignored) {
-						//ignore and fall through
-					}
-				}
-				showCreateContactDialog(null, null);
-			} else {
-				showCreateConferenceDialog();
-			}
-		});
+		 this.binding.Contactfab.setOnClickListener((v) -> {
+            if (binding.startConversationViewPager.getCurrentItem() == 0) {
+                String searchString = mSearchEditText != null ? mSearchEditText.getText().toString() : null;
+                if (searchString != null && !searchString.trim().isEmpty()) {
+                    try {
+                        Jid jid = Jid.of(searchString);
+                        if (jid.getLocal() != null && jid.isBareJid() && jid.getDomain().contains(".")) {
+                            showCreateContactDialog(jid.toString(), null);
+                            return;
+                        }
+                    } catch (IllegalArgumentException ignored) {
+                        //ignore and fall through
+                    }
+                }
+                showCreateContactDialog(null, null);
+            }
+        });
+        this.binding.creategroupmenufab.setOnClickListener((v) -> {
+            if (binding.groupmenufab.isOpened()) {
+                binding.groupmenufab.close(true);
+
+            }
+            showCreateConferenceDialog();
+
+        });
+        this.binding.joingroupmenufab.setOnClickListener((v) -> {
+            if (binding.groupmenufab.isOpened()) {
+                binding.groupmenufab.close(true);
+
+            }
+
+            showJoinConferenceDialog(null);
+
+        });
+
 		binding.tabLayout.setupWithViewPager(binding.startConversationViewPager);
 		binding.startConversationViewPager.addOnPageChangeListener(mOnPageChangeListener);
 		mListPagerAdapter = new ListPagerAdapter(getSupportFragmentManager());
@@ -889,16 +905,16 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 		mConferenceAdapter.notifyDataSetChanged();
 	}
 
-	private void onTabChanged() {
-		@DrawableRes final int fabDrawable;
-		if (binding.startConversationViewPager.getCurrentItem() == 0) {
-			fabDrawable = R.drawable.ic_person_add_white_24dp;
-		} else {
-			fabDrawable = R.drawable.ic_group_add_white_24dp;
-		}
-		binding.fab.setImageResource(fabDrawable);
-		invalidateOptionsMenu();
-	}
+	  private void onTabChanged() {
+        if (binding.startConversationViewPager.getCurrentItem() == 0) {
+            binding.Contactfab.setVisibility(View.VISIBLE);
+            binding.groupmenufab.setVisibility(View.GONE);
+        } else {
+            binding.groupmenufab.setVisibility(View.VISIBLE);
+            binding.Contactfab.setVisibility(View.GONE);
+        }
+        invalidateOptionsMenu();
+    }
 
 	@Override
 	public void OnUpdateBlocklist(final Status status) {
